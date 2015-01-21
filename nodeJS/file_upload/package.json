@@ -1,0 +1,11 @@
+{
+  "name": "file_upload",
+  "version": "1.0.0",
+  "description": "upload file",
+  "main": "index.js",
+  "private": true,
+  "dependencies": {
+    "express": "^4.11.0",
+    "multer": "^0.1.7"
+  }
+}

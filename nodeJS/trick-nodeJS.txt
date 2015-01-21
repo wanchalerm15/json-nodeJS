@@ -1,0 +1,3 @@
+ืnpm init ลงทะเบียนไฟล์ 
+ืnpm istall ชื่อโปรแกรม --save
+express คือ 

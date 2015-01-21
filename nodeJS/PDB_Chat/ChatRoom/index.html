@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>PDB Chat Room</title>
+        <meta charset="UTF-8">
+        <link rel="icon" href="images/favicon.ico">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+        <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="css/chat.css">
+        <script src="js/jquery/jquery.min.js"></script>
+        <script src="js/jquery.form.js"></script>
+        <script src="js/howler.min.js"></script>
+        <script type="text/javascript">
+            var sound_connect = new Howl({urls: ['sound/connect-sound.mp3'],autoplay: false,volume: 0.5,preload:true});
+            var sound_massage = new Howl({urls: ['sound/msg-sound.mp3'],autoplay: false,volume: 1,preload:true});
+        </script>
+    </head>
+    <body>
+        <div class="text-center totop" id="totop">
+            <span id="setting">
+                <span title="Logout User" data-placement="bottom" class="userOnlinetooltip" onclick="$('#setting > #show').slideToggle()">
+                    <i class="glyphicon glyphicon-cog"></i>
+                </span>
+                <ul id="show">
+                    <li onclick="$('#msg-history').modal()"><i class="glyphicon glyphicon-comment"></i> History Message</li>
+                    <li onclick="deleteCookie()"><i class="glyphicon glyphicon-log-out"></i> Log Out</li>
+                </ul>
+            </span> 
+
+            <span id="show-user"></span><small id="count_message"></small>
+
+            <span id="sound" onclick="setting_sound()">
+                <span title="Sound OFF" data-placement="bottom" class="userOnlinetooltip" id="sound_close">
+                    <i class="fa fa-volume-up"> <small>ON</small></i>
+                </span>
+            </span> 
+            <span id="userOnline" onclick="$('#userOnline > ul').fadeToggle()">
+                <span title="User Online" data-placement="bottom" class="userOnlinetooltip">
+                    <i class="glyphicon glyphicon-align-justify"></i>
+                </span>
+                <ul></ul>
+            </span>
+        </div>
+        <!--แถบแสดง กระดานสนทนา-->
+        <div id="show-msgData">            
+            <ul class="chatStory" id="chatStory"></ul>
+            <ul class="chatList" id="chatList"></ul>            
+        </div>
+        <div class="insertBOX">      
+            <form onsubmit="Add_massageData(this);return false;">
+                <input type="hidden" name="user_id" id="user_id">      
+                <input type="hidden" name="nameUser" id="nameUser">                            
+                <span id="inputChat">
+                    <input type="text" name="msgData" required class="form-control sendData"  placeholder="ข้อความผู้สนทนา">
+                    <span class='link' onclick="$('#fileUpload').click()"><i class="glyphicon glyphicon-link"></i></span>
+                    <button type="submit" class="btn btn-primary-i sendData" id="btnSend">
+                        <span>send</span>
+                    </button>
+                    <span id="upload"><i class="fa fa-spin fa-spinner"></i> กำลังอัพโหลด...<span id="percen"></span></span>
+                </span>
+            </form>
+        </div>
+        <div id="login" class="modal fade head-login foot-login">
+            <div class="modal-dialog" style="height:auto;">
+                <div class="modal-content content-radius">
+                    <!--ส่วน herd-->
+                    <div class="modal-header head-login">
+                        <h2>
+                            <img src="images/icon_pdb_new.png" class="imgLogo">
+                            <!--PDB CHAT-->
+                        </h2>
+                    </div>
+                    <!--ส่วน body-->
+                    <div class="modal-body" id="showLogin" style="text-align:center;">
+                        <br>
+                        <form onsubmit="checkLogin();return false;">
+                            <input class="input-xlarge form-control" type="text" placeholder="USERNAME" id="user_user" maxlength="20" required>
+                            <input class="input-xlarge form-control" type="password" placeholder="PASSWORD" id="user_pass" maxlength="20" required>
+                            <input type="checkbox" name="remember" id="remember" value="1">
+                            <label>Remember</label>
+                            <br>
+                            <button class="btn btn-primary-i" type="submit"><i class="glyphicon glyphicon-log-in"></i> LOGIN</button>
+                        </form>
+                        <br>
+                    </div>
+                    <!--Register -->
+                    <div class="mmodal-body"  id="showRegister" style="display:none;text-align:center;">
+                        <br>
+                        <form onsubmit="user_register();return false;">
+                            <input class="input-xlarge form-control" type="text" placeholder="Name" id="regis_name" maxlength="20" required >
+                            <input class="input-xlarge form-control" type="text" placeholder="Username" id="regis_user" maxlength="20"  required >
+                            <input class="input-xlarge form-control" type="password" placeholder="Pasword" id="regis_pass" maxlength="20" required>
+                            <input class="input-xlarge form-control" type="password" placeholder="Confirm Pasword" id="confirm_pass" maxlength="20" required>
+                            <button class="btn btn-primary-i" type="submit"><i class="glyphicon glyphicon-new-window"></i> Register</button>
+                        </form>
+                        <br>
+                    </div>
+                    <!--ส่วน foot-->
+                    <div class="modal-footer">
+                        <a href="#" onClick="showRegister();return false;" style="color:white;" id="Register">Register</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="msg-history" class="modal fade">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header" style="background:none;padding:10px;margin:0;height:auto;">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="text-center" style="text-decoration:underline;">ประวัติการสนทนา</h4>                
+                    </div>
+                    <div class="modal-body">
+                        <div id="showHistory-msgData">            
+                            <ul class="chatStory" id="chatStory"></ul>
+                            <ul class="chatList" id="chatList"></ul>            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <form method="post" enctype="multipart/form-data" id="formUpload" style="display:none;" onsubmit="uploadfile(this);return false;"> 
+            <input type="file" name="fileUpload" id="fileUpload" onchange="$('#formUpload').submit()">
+        </form>
+        <!-- Javascript -->
+        <script src="bootstrap/js/bootstrap.min.js"></script>
+        <script src="js/socket.io-1.2.1.js"></script>
+        <script src="js/jquery.md5.js"></script>
+        <script src="js/cookie.js"></script>
+        <script src="js/chat_manage.js"></script>
+        <small id="userChat"></small>
+    </body>
+</html>
