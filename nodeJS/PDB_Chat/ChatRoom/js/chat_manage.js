@@ -154,9 +154,6 @@ function checkLogin() {
         var user_pass=pass1;
     };
     var setCookie = ($('#remember:checked').val() === undefined)?false:true;
-    if(setCookie){
-        addCookie(user_user,user_pass);
-    }
     /*-------------------------------------------------------------------------*/
     var DataUser = {
         user_user:user_user,
@@ -192,6 +189,9 @@ function checkLogin() {
                     $('#login .form-control').val('');
                     history();
                     showLastChat();
+                    if(setCookie){
+                        addCookie(user_user,user_pass);
+                    }
                 }
                 socket.on('user disconnected',function(user){
                     if(user.user_id == sessionStorage.user_id){
@@ -290,8 +290,8 @@ function showLastChat(){
             $('#show-msgData ul.chatStory').append(ChatData);
         }
     });
-    chat();  
-    setTimeout(scroll_BT_animate,300);
+    chat();
+    setTimeout(scroll_BT_animate,900);
 }
 function userChat(){
     var socket = io.connect();
@@ -341,6 +341,7 @@ function uploadfile(form){
             uploadProgress: function (event, position, total, percen) {
                 $('#upload span#percen').text(percen+'%');
             },
+            timeout: 20000,
             success:function(file){
                 if(!file){
                     $('#upload span#percen').text('upload warning');
@@ -352,7 +353,8 @@ function uploadfile(form){
                         nameUser:sessionStorage.pdbUser,
                         file_name:file.originalname,
                         file_path:file.path,
-                        file_type:file.mimetype
+                        file_type:file.mimetype,
+                        file_size:fileSize
                     };
                     socket.emit('msg chat',file);
                 }
@@ -360,6 +362,18 @@ function uploadfile(form){
                 $('.sendData').each(function(){
                     $(this).removeAttr('disabled');
                 });
+            },
+            error: function(x, t, m) {
+                if(t==="timeout") {
+                    alert("got timeout");
+                } else {
+                    alert(t);
+                }
+                $('#fileUpload').val('');
+                $('.sendData').each(function(){
+                    $(this).removeAttr('disabled');
+                });
+                $('#upload').hide();
             }
         });
     }
@@ -371,4 +385,35 @@ function setting_sound(){
     }else{
         $('#sound_close').empty().append('<i class="fa fa-volume-up"> <small>ON</small></i>');
     }
+}
+
+function img_resize(image)
+{
+    $(image).hide();
+    var imgSrc = $(image).attr('src');
+    var canvarId = imgSrc.split('.')[0];
+    var imageSize = ($(image).attr('data-imagesize') !== undefined)?$(image).attr('data-imagesize'):100;
+    var imageLink = '<canvas id="'+canvarId+'" class="image-chat"></canvas>';
+    $(image).after(imageLink);
+    var myImage = new Image();
+    var thecanvas = document.getElementById(canvarId);
+    var ctx = thecanvas.getContext("2d");
+    myImage.src = imgSrc;
+    myImage.onload = function() {
+        var orl_width = myImage.width;
+        var orl_height = myImage.height;
+        var new_width = 0;
+        var new_height = 0;
+        if(orl_width > orl_height){
+            new_width = imageSize;
+            new_height = parseInt((new_width/orl_width)*orl_height);
+        }else{
+            new_height = imageSize;
+            new_width = parseInt((new_height/orl_height)*orl_width);
+        }
+        thecanvas.width=new_width;
+        thecanvas.height=new_height;
+        ctx.drawImage(myImage, 0, 0, new_width, new_height);
+    } 
+    $(image).remove();
 }

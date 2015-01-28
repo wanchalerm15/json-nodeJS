@@ -247,6 +247,7 @@ body{
     list-style: none;
     padding: 5px 0;
     right: 0;
+    top: 10px;
     font-size: 14px;
     top: 43px;
 }
@@ -260,7 +261,7 @@ body{
     border:solid 1px rgba(255,255,255,.3);
     background-color: rgba(235, 125, 6,.5);
     position: relative;
-    z-index: -100;
+    z-index: -10;
     text-align: left;
     overflow-x: hidden;
 }
@@ -306,10 +307,33 @@ li{
     top: -60%;
     right: 1%;
     background-color: rgba(255,255,255,.7);
+    padding: 3px;
+    border-radius: 5px;
 }
 .image-chat{
-    width:100%;
     border-radius: 10px;
+    display: none;
+}
+canvas.image-chat,#image-chat{
+    display: inline-block;
+}
+img.image-chat{
+    width: 200px;
+    border-radius: 10px;
+}
+img#image-chat{
+    width: 150px;
+}
+small.filesize{
+    color: #9f724a;
+    text-align: right;
+    display: block;
+}
+canvas, img{
+    image-rendering: optimizeQuality;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: optimize-contrast;
 }
 
 /*----------------------- Css3 For Smartphone -------------------------*/
@@ -361,7 +385,7 @@ li{
 }
 @media screen and (max-width:515px){
     #show-user,#count_message{
-       font-size: 14px;
+        font-size: 14px;
     }
     .link{
         right: 5%;
@@ -393,6 +417,18 @@ li{
     .chatList{
         padding-bottom: 90px;
     }
+    .image-chat{
+        width: 100%;
+        border-radius: 10px;
+    }
+    img.image-chat{
+        width: 100%;
+        border-radius: 10px;
+    }
+    #upload{
+        top: -30%;
+    }
+}
 }
 *, *:before, *:after {
     -moz-box-sizing: border-box;

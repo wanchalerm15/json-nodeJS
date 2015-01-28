@@ -195,12 +195,17 @@ io.sockets.on('connection', function (socket) {
             var fileName = msg.file_name;
             var fileType = msg.file_type;
             var filePath = msg.file_path.replace(/\\/gi,'/');
+            var file_size = msg.file_size;
             filePath = filePath.replace('ChatRoom/','');
             var massage='';
             if(fileType==="image/jpeg"||fileType === 'image/jpg'||fileType === 'image/gif'||fileType === 'image/png'){
-                massage = "<a href='"+filePath+"' target='_blank'><img src='"+filePath+"' class='image-chat'></a>";
+                if(file_size < 480){
+                    massage = "<a href='"+filePath+"' target='_blank'><img src='"+filePath+"' id='image-chat' class='image-chat'></a>";
+                }else{
+                    massage = "<a href='"+filePath+"' target='_blank'><img src='"+filePath+"' data-imagesize='200'  class='image-chat' onload='img_resize(this)'></a>";
+                }
             }else{
-                massage = "<a href='"+filePath+"' target='_blank'>"+fileName+"</a>";
+                massage = "<a href='"+filePath+"' target='_blank'><i class='glyphicon glyphicon-file'></i> "+fileName+"</a> <br><small class='filesize'>Size:[ "+parseInt(file_size)+" KB ]</small>";
             }
             var DataInsert = insertChatON_DB(nameUser,escape(massage),true);
             io.sockets.emit('msg chat', DataInsert);
