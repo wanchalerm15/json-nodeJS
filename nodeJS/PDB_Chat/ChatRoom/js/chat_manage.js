@@ -1,3 +1,7 @@
+// กำหนดไฟล์ที่จะสามารถ อัพโหลดได้ อัพแบบธรรมดา
+var _minfile_size = 2048;
+// กำหนดไฟล์ที่จะสามารถ อัพโหลดได้ อัพแบบบังคับให้มากกว่า
+var _maxfile_size = 5120;
 $(function () {
     //Check cookie
     var user1=getCookie("user");
@@ -324,10 +328,21 @@ function uploadfile(form){
     var fileUpload = document.getElementById('fileUpload');
     var file = fileUpload.files[0];
     var fileSize = file.size/1024;
-    if(fileSize > 2048){
-        alert('กรุณาอัพโหลดไฟล์ที่มีขนาดต่ำกว่า 2 MB !');
-        return false;
-    }else{
+    var upload = false;
+    if(fileSize > _minfile_size){
+        alert('คุณอัพโหลดไฟล์ที่มีขนาดมากกว่า 2 MB');
+        if(confirm('ต้องการดำเนินการต่อหรือไม่ !')){
+            if(fileSize <= _maxfile_size){
+                upload = true;
+            }else{
+                alert('คุณอัพโหลดไฟล์ที่มีขนาดมากกว่า 5 MB');
+                upload = false;
+            }
+        }else{
+            $('#fileUpload').val(''); 
+        }
+    }
+    if(upload){
         var socket = io.connect();
         $(form).ajaxSubmit({
             url:'upload-file',

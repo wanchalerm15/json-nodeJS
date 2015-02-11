@@ -12,7 +12,6 @@ var conn = mysql.createConnection({
     insecureAuth:true
 });
 conn.connect();
-
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:false}))
@@ -86,8 +85,14 @@ console.log("Server Start...");
 console.log("Server Port : 32211");
 console.log("Welcome to PDB Chat Room");
 createDB();
+selectDate();
 /*------------------------------------------------------------------------------*/
-
+function selectDate(){
+    conn.query("select now() as d",function(error,respon){
+        console.log(respon[0].d);
+    });
+    setTimeout(selectDate,1800000);
+}
 function createDB(){
     conn.query("create database if not exists PDB_Chat");
     conn.query("use PDB_Chat");
