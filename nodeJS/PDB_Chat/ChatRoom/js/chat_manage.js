@@ -341,7 +341,10 @@ function uploadfile(form){
         }else{
             $('#fileUpload').val(''); 
         }
+    }else{
+        upload = true;
     }
+    /*--------- Uplpad File To Server ----------*/
     if(upload){
         var socket = io.connect();
         $(form).ajaxSubmit({
